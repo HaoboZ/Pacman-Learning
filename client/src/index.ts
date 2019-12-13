@@ -15,7 +15,11 @@ function start() {
 			height:     36 * 8
 		},
 		physics: {
-			default: 'arcade'
+			default: 'arcade',
+			arcade:  {
+				// debug:    true,
+				tileBias: 2
+			}
 		},
 		scene:   Main
 	} );
