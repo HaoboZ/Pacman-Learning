@@ -38,10 +38,10 @@ export default class Ghost extends Entity {
 			} );
 		}
 		
-		this.createEvents( x + 8, y + 8 );
+		this.createEvents();
 	}
 	
-	createEvents( x, y ) {
+	createEvents() {
 		this.scene.events.on( 'ghostModeChange', home => {
 			this.reverse();
 			this.data.set( 'mode', home );
@@ -53,7 +53,7 @@ export default class Ghost extends Entity {
 			this.data.set( 'dead', false );
 			this.prevTile = null;
 		} );
-		this.scene.events.on( 'pacmanEatPellet', power => {
+		this.scene.events.on( 'pacmanEatPellet', ( total, power ) => {
 			if ( power && !this.data.get( 'dead' ) ) {
 				this.reverse();
 				this.data.set( 'fright', 2 );
@@ -68,8 +68,8 @@ export default class Ghost extends Entity {
 			}
 		} );
 		this.on( 'changedata-home', ( _, val ) => {
-			if ( val ) {
-				this.setPosition( x, y );
+			if ( !val ) {
+				this.setPosition( 112, 116 );
 			}
 		} );
 	}
@@ -81,7 +81,6 @@ export default class Ghost extends Entity {
 				if ( tile.y === 14
 					&& ( tile.x === 13 || tile.x === 14 )
 					&& ( this.prevTile.x === 13 || this.prevTile.x === 14 ) ) {
-					this.data.set( 'home', true );
 					this.data.set( 'dead', false );
 				}
 			}
@@ -93,19 +92,19 @@ export default class Ghost extends Entity {
 	}
 	
 	updateNextDirection( tile: Phaser.Math.Vector2 ) {
+		if ( this.data.get( 'dead' ) ) {
+			this.target.set( 13, 14 );
+		} else if ( this.data.get( 'mode' ) ) {
+			this.target.setFromObject( this.home );
+		} else {
+			this.updateTarget();
+		}
 		const openDirections = {
 			[ Phaser.RIGHT ]: this.scene.map.getTileAt( tile.x + 1, tile.y, true ),
 			[ Phaser.LEFT ]:  this.scene.map.getTileAt( tile.x - 1, tile.y, true ),
 			[ Phaser.UP ]:    this.scene.map.getTileAt( tile.x, tile.y - 1, true ),
 			[ Phaser.DOWN ]:  this.scene.map.getTileAt( tile.x, tile.y + 1, true )
 		};
-		if ( this.data.get( 'dead' ) ) {
-			this.target.set( 13, 14 );
-		} else if ( this.data.get( 'mode' ) ) {
-			this.target.setFromObject( this.home );
-		} else {
-			this.updateTarget( openDirections );
-		}
 		let nearestDirection = this.nextDirection,
 		    nearestDistance  = Infinity;
 		for ( const direction in openDirections ) {
@@ -128,7 +127,7 @@ export default class Ghost extends Entity {
 		this.nextDirection = nearestDirection;
 	}
 	
-	updateTarget( openDirections: {} ) {
+	updateTarget() {
 		this.target.setFromObject( this.home );
 	}
 	

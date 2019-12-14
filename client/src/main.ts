@@ -27,12 +27,12 @@ export default class Main extends Phaser.Scene {
 		this.entities.addFromObjects( this.map.getObjectLayer( 'entities' ) );
 		this.physics.add.collider( this.map.getLayer().tilemapLayer, this.entities );
 		this.physics.add.overlap( this.entities.ghosts, this.data.get( 'pacman' ), ( ghost ) => {
-			// if ( ghost.data.get( 'fright' ) ) {
-			ghost.data.set( 'fright', 0 );
-			ghost.data.set( 'dead', true );
-			// } else if ( !ghost.data.get( 'dead' ) ) {
-			// 	this.events.emit( 'reset' );
-			// }
+			if ( ghost.data.get( 'fright' ) ) {
+				ghost.data.set( 'fright', 0 );
+				ghost.data.set( 'dead', true );
+			} else if ( !ghost.data.get( 'dead' ) ) {
+				this.events.emit( 'reset' );
+			}
 		} );
 		
 		this.events.on( 'reset', () => {

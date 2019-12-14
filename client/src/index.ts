@@ -17,7 +17,7 @@ function start() {
 		physics: {
 			default: 'arcade',
 			arcade:  {
-				debug:    true,
+				// debug:    true,
 				tileBias: 4
 			}
 		},

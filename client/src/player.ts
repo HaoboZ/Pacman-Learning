@@ -10,7 +10,6 @@ export default class Player extends Phaser.GameObjects.GameObject {
 		down:  Phaser.Input.Keyboard.KeyCodes.S,
 		left:  Phaser.Input.Keyboard.KeyCodes.A,
 		right: Phaser.Input.Keyboard.KeyCodes.D,
-		space: Phaser.Input.Keyboard.KeyCodes.SPACE,
 		enter: Phaser.Input.Keyboard.KeyCodes.ENTER
 	} ) as any;
 	
@@ -30,9 +29,6 @@ export default class Player extends Phaser.GameObjects.GameObject {
 			this.scene.data.get( 'pacman' ).nextDirection = Phaser.RIGHT;
 		} );
 		
-		this.controls.space.on( Phaser.Input.Keyboard.Events.DOWN, () => {
-			this.scene.events.emit( 'debug' );
-		} );
 		this.controls.enter.on( Phaser.Input.Keyboard.Events.DOWN, () => {
 			this.scene.events.emit( 'reset' );
 		} );

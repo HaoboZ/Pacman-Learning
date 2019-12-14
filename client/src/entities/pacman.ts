@@ -17,7 +17,8 @@ export default class Pacman extends Entity {
 	update() {
 		const tile = this.scene.pelletLayer.getTileAtWorldXY( this.x, this.y );
 		if ( tile ) {
-			this.scene.events.emit( 'pacmanEatPellet', tile.index !== 46 );
+			this.scene.events.emit( 'pacmanEatPellet',
+				this.scene.pelletLayer.tilesDrawn, tile.index !== 46 );
 			this.scene.pelletLayer.removeTileAt( tile.x, tile.y );
 			if ( !this.scene.pelletLayer.tilesDrawn ) {
 				this.scene.events.emit( 'reset' );

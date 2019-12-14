@@ -1,4 +1,7 @@
 import Blinky from './ghost/blinky';
+import Clyde from './ghost/clyde';
+import Inky from './ghost/inky';
+import Pinky from './ghost/pinky';
 import Pacman from './pacman';
 
 
@@ -12,7 +15,10 @@ export default class Entities extends Phaser.Physics.Arcade.Group {
 		layer.objects.forEach( ( object ) => {
 			const SpriteClass = {
 				'pacman': Pacman,
-				'blinky': Blinky
+				'blinky': Blinky,
+				'pinky':  Pinky,
+				'inky':   Inky,
+				'clyde':  Clyde
 			}[ object.name ];
 			if ( SpriteClass ) {
 				const sprite: Phaser.Physics.Arcade.Sprite = new SpriteClass( this.scene, object.x, object.y,
