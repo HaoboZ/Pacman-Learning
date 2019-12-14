@@ -10,26 +10,30 @@ export default class Player extends Phaser.GameObjects.GameObject {
 		down:  Phaser.Input.Keyboard.KeyCodes.S,
 		left:  Phaser.Input.Keyboard.KeyCodes.A,
 		right: Phaser.Input.Keyboard.KeyCodes.D,
-		space: Phaser.Input.Keyboard.KeyCodes.SPACE
+		space: Phaser.Input.Keyboard.KeyCodes.SPACE,
+		enter: Phaser.Input.Keyboard.KeyCodes.ENTER
 	} ) as any;
 	
 	constructor( scene: Phaser.Scene ) {
 		super( scene, 'interactive' );
 		
 		this.controls.up.on( Phaser.Input.Keyboard.Events.DOWN, () => {
-			this.scene.entities.pacman.direction = Phaser.UP;
+			this.scene.data.get( 'pacman' ).nextDirection = Phaser.UP;
 		} );
 		this.controls.down.on( Phaser.Input.Keyboard.Events.DOWN, () => {
-			this.scene.entities.pacman.direction = Phaser.DOWN;
+			this.scene.data.get( 'pacman' ).nextDirection = Phaser.DOWN;
 		} );
 		this.controls.left.on( Phaser.Input.Keyboard.Events.DOWN, () => {
-			this.scene.entities.pacman.direction = Phaser.LEFT;
+			this.scene.data.get( 'pacman' ).nextDirection = Phaser.LEFT;
 		} );
 		this.controls.right.on( Phaser.Input.Keyboard.Events.DOWN, () => {
-			this.scene.entities.pacman.direction = Phaser.RIGHT;
+			this.scene.data.get( 'pacman' ).nextDirection = Phaser.RIGHT;
 		} );
 		
 		this.controls.space.on( Phaser.Input.Keyboard.Events.DOWN, () => {
+			this.scene.events.emit( 'debug' );
+		} );
+		this.controls.enter.on( Phaser.Input.Keyboard.Events.DOWN, () => {
 			this.scene.events.emit( 'reset' );
 		} );
 	}

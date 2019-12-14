@@ -1,4 +1,4 @@
-{ "compressionlevel":0,
+{ "compressionlevel":-1,
  "editorsettings":
     {
      "export":
@@ -41,7 +41,7 @@
         {
          "draworder":"topdown",
          "id":4,
-         "name":"objects",
+         "name":"entities",
          "objects":[
                 {
                  "height":16,
@@ -58,6 +58,17 @@
                  "height":16,
                  "id":5,
                  "name":"inky",
+                 "properties":[
+                        {
+                         "name":"homeX",
+                         "type":"int",
+                         "value":0
+                        }, 
+                        {
+                         "name":"homeY",
+                         "type":"int",
+                         "value":35
+                        }],
                  "rotation":0,
                  "type":"ghost",
                  "visible":true,
@@ -69,6 +80,17 @@
                  "height":16,
                  "id":6,
                  "name":"clyde",
+                 "properties":[
+                        {
+                         "name":"homeX",
+                         "type":"int",
+                         "value":27
+                        }, 
+                        {
+                         "name":"homeY",
+                         "type":"int",
+                         "value":35
+                        }],
                  "rotation":0,
                  "type":"ghost",
                  "visible":true,
@@ -80,6 +102,17 @@
                  "height":16,
                  "id":7,
                  "name":"pinky",
+                 "properties":[
+                        {
+                         "name":"homeX",
+                         "type":"int",
+                         "value":2
+                        }, 
+                        {
+                         "name":"homeY",
+                         "type":"int",
+                         "value":0
+                        }],
                  "rotation":0,
                  "type":"ghost",
                  "visible":true,
@@ -91,6 +124,17 @@
                  "height":16,
                  "id":8,
                  "name":"blinky",
+                 "properties":[
+                        {
+                         "name":"homeX",
+                         "type":"int",
+                         "value":25
+                        }, 
+                        {
+                         "name":"homeY",
+                         "type":"int",
+                         "value":0
+                        }],
                  "rotation":0,
                  "type":"ghost",
                  "visible":true,
@@ -104,8 +148,8 @@
          "x":0,
          "y":0
         }],
- "nextlayerid":6,
- "nextobjectid":10,
+ "nextlayerid":7,
+ "nextobjectid":21,
  "orientation":"orthogonal",
  "renderorder":"right-down",
  "tiledversion":"1.3.1",

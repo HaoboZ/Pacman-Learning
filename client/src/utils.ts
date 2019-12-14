@@ -5,6 +5,6 @@ const opposites = {
 	[ Phaser.RIGHT ]: Phaser.LEFT
 };
 
-export function reverseDirection( direction ) {
+export function oppositeDirection( direction ) {
 	return opposites[ direction ];
 }
