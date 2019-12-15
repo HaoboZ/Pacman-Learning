@@ -1,13 +1,14 @@
+import Instance from '../../instance';
 import Entity from '../index';
 import Ghost from './index';
 
 
 export default class Pinky extends Ghost {
 	
-	constructor( scene: Phaser.Scene, x, y, props ) {
-		super( scene, x, y, 'pinky', props, 70 );
+	constructor( instance: Instance, x, y, props ) {
+		super( instance, x, y, 'pinky', props, 70 );
 		
-		this.scene.events.on( 'reset', () => {
+		this.instance.on( 'reset', () => {
 			this.scene.time.delayedCall( 500, () => {
 				this.data.set( 'home', false );
 			} );
@@ -15,7 +16,7 @@ export default class Pinky extends Ghost {
 	}
 	
 	updateTarget() {
-		const pacman = this.scene.data.get( 'pacman' ) as Entity;
+		const pacman = this.instance.data.get( 'pacman' ) as Entity;
 		const velocity = new Phaser.Math.Vector2(
 			+( pacman.direction === Phaser.RIGHT ) - +( pacman.direction === Phaser.LEFT ),
 			+( pacman.direction === Phaser.DOWN ) - +( pacman.direction === Phaser.UP ) );

@@ -1,4 +1,5 @@
-import { oppositeDirection } from '../../utils';
+import Instance from '../../instance';
+import { createAnimExists, oppositeDirection } from '../../utils';
 import Entity from '../index';
 
 
@@ -10,8 +11,8 @@ export default class Ghost extends Entity {
 	
 	prevTile: Phaser.Math.Vector2;
 	
-	constructor( scene: Phaser.Scene, x, y, name: string, props, frame: number ) {
-		super( scene, x, y, name, frame );
+	constructor( instance: Instance, x, y, name: string, props, frame: number ) {
+		super( instance, x, y, name, frame );
 		this.home = new Phaser.Math.Vector2( props.homeX, props.homeY );
 		this.setDataEnabled();
 		
@@ -21,39 +22,37 @@ export default class Ghost extends Entity {
 			up:    [ frame + 4, frame + 5 ],
 			down:  [ frame + 6, frame + 7 ]
 		} );
-		if ( !this.scene.anims.exists( 'fright' ) ) {
-			this.scene.anims.create( {
-				key:       'ghost-fright',
-				frames:    this.scene.anims.generateFrameNumbers( 'sprites',
-					{ frames: [ 64, 65, 64, 65, 64, 65, 66, 67, 66, 67, 66, 67 ] } ),
-				frameRate: 15,
-				repeat:    Phaser.FOREVER
-			} );
-			this.scene.anims.create( {
-				key:       'ghost-fright-quick',
-				frames:    this.scene.anims.generateFrameNumbers( 'sprites',
-					{ frames: [ 64, 65, 66, 67 ] } ),
-				frameRate: 15,
-				repeat:    Phaser.FOREVER
-			} );
-		}
+		createAnimExists( this.scene, {
+			key:       'ghost-fright',
+			frames:    this.scene.anims.generateFrameNumbers( 'sprites',
+				{ frames: [ 64, 65, 64, 65, 64, 65, 66, 67, 66, 67, 66, 67 ] } ),
+			frameRate: 15,
+			repeat:    Phaser.FOREVER
+		} );
+		createAnimExists( this.scene, {
+			key:       'ghost-fright-quick',
+			frames:    this.scene.anims.generateFrameNumbers( 'sprites',
+				{ frames: [ 64, 65, 66, 67 ] } ),
+			frameRate: 15,
+			repeat:    Phaser.FOREVER
+		} );
 		
 		this.createEvents();
 	}
 	
 	createEvents() {
-		this.scene.events.on( 'ghostModeChange', home => {
+		this.instance.on( 'ghostModeChange', home => {
 			this.reverse();
 			this.data.set( 'mode', home );
 		} );
-		this.scene.events.on( 'reset', () => {
+		this.instance.on( 'reset', () => {
 			this.data.set( 'home', true );
 			this.data.set( 'mode', true );
 			this.data.set( 'fright', 0 );
 			this.data.set( 'dead', false );
 			this.prevTile = null;
 		} );
-		this.scene.events.on( 'pacmanEatPellet', ( total, power ) => {
+		this.instance.on( 'pacmanEatPellet', ( total, power ) => {
 			if ( power && !this.data.get( 'dead' ) ) {
 				this.reverse();
 				this.data.set( 'fright', 2 );
@@ -87,7 +86,6 @@ export default class Ghost extends Entity {
 			this.updateNextDirection( tile );
 			this.prevTile = tile;
 		}
-		this.scene.debugGraphic.lineBetween( this.x, this.y, this.target.x * 8 + 4, this.target.y * 8 + 4 );
 		super.update();
 	}
 	

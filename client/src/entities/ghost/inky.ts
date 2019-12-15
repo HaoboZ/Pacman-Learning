@@ -1,13 +1,14 @@
+import Instance from '../../instance';
 import Entity from '../index';
 import Ghost from './index';
 
 
 export default class Inky extends Ghost {
 	
-	constructor( scene: Phaser.Scene, x, y, props ) {
-		super( scene, x, y, 'inky', props, 84 );
+	constructor( instance: Instance, x, y, props ) {
+		super( instance, x, y, 'inky', props, 84 );
 		
-		this.scene.events.on( 'pacmanEatPellet', total => {
+		this.instance.on( 'pacmanEatPellet', total => {
 			if ( this.data.get( 'home' ) && total <= 244 - 30 ) {
 				this.data.set( 'home', false );
 			}
@@ -15,8 +16,8 @@ export default class Inky extends Ghost {
 	}
 	
 	updateTarget() {
-		const pacman = this.scene.data.get( 'pacman' ) as Entity,
-		      blinky = this.scene.data.get( 'blinky' ) as Entity;
+		const pacman = this.instance.data.get( 'pacman' ) as Entity,
+		      blinky = this.instance.data.get( 'blinky' ) as Entity;
 		
 		const velocity = new Phaser.Math.Vector2(
 			+( pacman.direction === Phaser.RIGHT ) - +( pacman.direction === Phaser.LEFT ),

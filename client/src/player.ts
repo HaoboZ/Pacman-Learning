@@ -17,20 +17,21 @@ export default class Player extends Phaser.GameObjects.GameObject {
 		super( scene, 'interactive' );
 		
 		this.controls.up.on( Phaser.Input.Keyboard.Events.DOWN, () => {
-			this.scene.data.get( 'pacman' ).nextDirection = Phaser.UP;
+			this.scene.instances.forEach( instance => instance.data.get( 'pacman' ).nextDirection = Phaser.UP );
 		} );
 		this.controls.down.on( Phaser.Input.Keyboard.Events.DOWN, () => {
-			this.scene.data.get( 'pacman' ).nextDirection = Phaser.DOWN;
+			this.scene.instances.forEach( instance => instance.data.get( 'pacman' ).nextDirection = Phaser.DOWN );
 		} );
 		this.controls.left.on( Phaser.Input.Keyboard.Events.DOWN, () => {
-			this.scene.data.get( 'pacman' ).nextDirection = Phaser.LEFT;
+			this.scene.instances.forEach( instance => instance.data.get( 'pacman' ).nextDirection = Phaser.LEFT );
 		} );
 		this.controls.right.on( Phaser.Input.Keyboard.Events.DOWN, () => {
-			this.scene.data.get( 'pacman' ).nextDirection = Phaser.RIGHT;
+			this.scene.instances.forEach( instance => instance.data.get( 'pacman' ).nextDirection = Phaser.RIGHT );
 		} );
 		
 		this.controls.enter.on( Phaser.Input.Keyboard.Events.DOWN, () => {
 			this.scene.events.emit( 'reset' );
+			this.scene.instances.forEach( instance => instance.emit( 'reset' ) );
 		} );
 	}
 	

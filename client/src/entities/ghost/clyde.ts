@@ -1,13 +1,14 @@
+import Instance from '../../instance';
 import Entity from '../index';
 import Ghost from './index';
 
 
 export default class Clyde extends Ghost {
 	
-	constructor( scene: Phaser.Scene, x, y, props ) {
-		super( scene, x, y, 'clyde', props, 98 );
+	constructor( instance: Instance, x, y, props ) {
+		super( instance, x, y, 'clyde', props, 98 );
 		
-		this.scene.events.on( 'pacmanEatPellet', total => {
+		this.instance.on( 'pacmanEatPellet', total => {
 			if ( this.data.get( 'home' ) && total <= 244 - 60 ) {
 				this.data.set( 'home', false );
 			}
@@ -15,7 +16,7 @@ export default class Clyde extends Ghost {
 	}
 	
 	updateTarget() {
-		const pacman = this.scene.data.get( 'pacman' ) as Entity;
+		const pacman = this.instance.data.get( 'pacman' ) as Entity;
 		const pacmanPos = this.scene.map.worldToTileXY( pacman.x, pacman.y ),
 		      tilePos   = this.scene.map.worldToTileXY( pacman.x, pacman.y );
 		if ( Phaser.Math.Distance.Squared( tilePos.x, tilePos.y, pacmanPos.x, pacmanPos.y ) > 64 ) {

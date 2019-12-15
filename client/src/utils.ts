@@ -8,3 +8,9 @@ const opposites = {
 export function oppositeDirection( direction ) {
 	return opposites[ direction ];
 }
+
+export function createAnimExists( scene: Phaser.Scene, config: Phaser.Types.Animations.Animation ) {
+	if ( !scene.anims.exists( config.key ) ) {
+		scene.anims.create( config );
+	}
+}
