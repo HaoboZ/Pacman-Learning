@@ -23,9 +23,9 @@ export default class Entity extends Phaser.Physics.Arcade.Sprite {
 			this.anims.stop();
 			this.setFrame( frame );
 			this.setActive( true );
+			this.setVisible( true );
 		} );
 		this.instance.on( 'end', () => {
-			this.setActive( false );
 			this.setVelocity( 0 );
 		} );
 	}
@@ -123,7 +123,7 @@ export default class Entity extends Phaser.Physics.Arcade.Sprite {
 	}
 	
 	getSpeed() {
-		return 75;
+		return 50 * this.scene.timeScale;
 	}
 	
 }

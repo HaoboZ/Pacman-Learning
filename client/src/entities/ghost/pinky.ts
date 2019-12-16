@@ -10,13 +10,13 @@ export default class Pinky extends Ghost {
 		
 		this.instance.on( 'reset', () => {
 			this.scene.time.delayedCall( 500, () => {
-				this.data.set( 'home', false );
+				this.setData( 'home', false );
 			} );
 		} );
 	}
 	
 	updateTarget() {
-		const pacman = this.instance.data.get( 'pacman' ) as Entity;
+		const pacman = this.instance.getData( 'pacman' ) as Entity;
 		const velocity = new Phaser.Math.Vector2(
 			+( pacman.direction === Phaser.RIGHT ) - +( pacman.direction === Phaser.LEFT ),
 			+( pacman.direction === Phaser.DOWN ) - +( pacman.direction === Phaser.UP ) );

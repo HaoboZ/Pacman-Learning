@@ -9,15 +9,15 @@ export default class Inky extends Ghost {
 		super( instance, x, y, 'inky', props, 84 );
 		
 		this.instance.on( 'pacmanEatPellet', total => {
-			if ( this.data.get( 'home' ) && total <= 244 - 30 ) {
-				this.data.set( 'home', false );
+			if ( this.getData( 'home' ) && total <= 244 - 30 ) {
+				this.setData( 'home', false );
 			}
 		} );
 	}
 	
 	updateTarget() {
-		const pacman = this.instance.data.get( 'pacman' ) as Entity,
-		      blinky = this.instance.data.get( 'blinky' ) as Entity;
+		const pacman = this.instance.getData( 'pacman' ) as Entity,
+		      blinky = this.instance.getData( 'blinky' ) as Entity;
 		
 		const velocity = new Phaser.Math.Vector2(
 			+( pacman.direction === Phaser.RIGHT ) - +( pacman.direction === Phaser.LEFT ),

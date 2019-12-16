@@ -1,11 +1,16 @@
-import Instance from './instance';
+import Controller from './controller';
+import Runner from './runner';
 
 
 export default class Main extends Phaser.Scene {
 	
 	map: Phaser.Tilemaps.Tilemap;
 	
-	instances: Instance[] = [];
+	startTime: number;
+	runner: Runner;
+	timeScale = 1;
+	
+	debugGraphic: Phaser.GameObjects.Graphics;
 	
 	preload() {
 		this.load.image( 'tiles', 'assets/tilemap/maze.png' );
@@ -37,16 +42,20 @@ export default class Main extends Phaser.Scene {
 					pellets.putTileAt( this.data.get( 'dotTiles' )[ index ], tile.x, tile.y );
 				}
 			} );
+			this.startTime = this.time.now;
 		} );
 		
-		this.instances.push( new Instance( this, true ) );
-		this.instances.push( new Instance( this ) );
-		this.instances.push( new Instance( this ) );
-		this.instances.push( new Instance( this ) );
+		this.debugGraphic = this.add.graphics();
+		this.debugGraphic.setDepth( Number.MAX_VALUE );
+		this.events.on( 'preupdate', () => this.debugGraphic.clear() );
+		
+		this.runner = new Runner( this );
+		
+		new Controller( this );
 	}
 	
 	update() {
-		this.instances.forEach( instance => instance.active && instance.update() );
+		this.runner.instances.forEach( instance => instance.active && instance.update() );
 	}
 	
 }

@@ -9,14 +9,14 @@ export default class Clyde extends Ghost {
 		super( instance, x, y, 'clyde', props, 98 );
 		
 		this.instance.on( 'pacmanEatPellet', total => {
-			if ( this.data.get( 'home' ) && total <= 244 - 60 ) {
-				this.data.set( 'home', false );
+			if ( this.getData( 'home' ) && total <= 244 - 60 ) {
+				this.setData( 'home', false );
 			}
 		} );
 	}
 	
 	updateTarget() {
-		const pacman = this.instance.data.get( 'pacman' ) as Entity;
+		const pacman = this.instance.getData( 'pacman' ) as Entity;
 		const pacmanPos = this.scene.map.worldToTileXY( pacman.x, pacman.y ),
 		      tilePos   = this.scene.map.worldToTileXY( pacman.x, pacman.y );
 		if ( Phaser.Math.Distance.Squared( tilePos.x, tilePos.y, pacmanPos.x, pacmanPos.y ) > 64 ) {

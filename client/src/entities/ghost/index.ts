@@ -41,30 +41,43 @@ export default class Ghost extends Entity {
 	}
 	
 	createEvents() {
-		this.instance.on( 'ghostModeChange', home => {
-			this.reverse();
-			this.data.set( 'mode', home );
-		} );
 		this.instance.on( 'reset', () => {
-			this.data.set( 'home', true );
-			this.data.set( 'mode', true );
-			this.data.set( 'fright', 0 );
-			this.data.set( 'dead', false );
+			this.setData( 'home', true );
+			this.setData( 'mode', true );
+			this.setData( 'fright', 0 );
+			this.setData( 'dead', false );
 			this.prevTile = null;
 		} );
+		this.instance.on( 'ghostModeChange', home => {
+			this.reverse();
+			this.setData( 'mode', home );
+		} );
 		this.instance.on( 'pacmanEatPellet', ( total, power ) => {
-			if ( power && !this.data.get( 'dead' ) ) {
-				this.reverse();
-				this.data.set( 'fright', 2 );
-				this.scene.time.delayedCall( 4500, () => {
-					if ( this.data.get( 'fright' ) === 2 ) {
-						this.data.set( 'fright', 1 );
-					}
-				} );
-				this.scene.time.delayedCall( 6000, () => {
-					this.data.set( 'fright', 0 );
-				} );
+			// TODO: unremove power pellet
+			// if ( power && !this.getData( 'dead' ) ) {
+			// 	this.reverse();
+			// 	this.setData( 'fright', 2 );
+			// 	this.scene.time.delayedCall( 4500, () => {
+			// 		if ( this.getData( 'fright' ) === 2 ) {
+			// 			this.setData( 'fright', 1 );
+			// 		}
+			// 	} );
+			// 	this.scene.time.delayedCall( 6000, () => {
+			// 		this.setData( 'fright', 0 );
+			// 	} );
+			// }
+		} );
+		this.instance.on( 'ghostLeave', res => {
+			if ( this.getData( 'home' ) && !res.left ) {
+				this.setData( 'home', false );
+				res.left = true;
 			}
+		} );
+		this.instance.on( 'end', () => {
+			this.setActive( false );
+			this.scene.time.delayedCall( 1000, () => {
+				this.setVisible( false );
+			} );
 		} );
 		this.on( 'changedata-home', ( _, val ) => {
 			if ( !val ) {
@@ -76,11 +89,11 @@ export default class Ghost extends Entity {
 	update() {
 		const tile = this.scene.map.worldToTileXY( this.x, this.y );
 		if ( !this.prevTile || !tile.equals( this.prevTile ) ) {
-			if ( this.data.get( 'dead' ) ) {
+			if ( this.getData( 'dead' ) ) {
 				if ( tile.y === 14
 					&& ( tile.x === 13 || tile.x === 14 )
 					&& ( this.prevTile.x === 13 || this.prevTile.x === 14 ) ) {
-					this.data.set( 'dead', false );
+					this.setData( 'dead', false );
 				}
 			}
 			this.updateNextDirection( tile );
@@ -90,13 +103,14 @@ export default class Ghost extends Entity {
 	}
 	
 	updateNextDirection( tile: Phaser.Math.Vector2 ) {
-		if ( this.data.get( 'dead' ) ) {
+		if ( this.getData( 'dead' ) ) {
 			this.target.set( 13, 14 );
-		} else if ( this.data.get( 'mode' ) ) {
+		} else if ( this.getData( 'mode' ) ) {
 			this.target.setFromObject( this.home );
 		} else {
 			this.updateTarget();
 		}
+		
 		const openDirections = {
 			[ Phaser.RIGHT ]: this.scene.map.getTileAt( tile.x + 1, tile.y, true ),
 			[ Phaser.LEFT ]:  this.scene.map.getTileAt( tile.x - 1, tile.y, true ),
@@ -110,7 +124,7 @@ export default class Ghost extends Entity {
 			if ( openDirections[ direction ].index !== -1 ) continue;
 			if ( +direction === oppositeDirection( this.nextDirection ) ) continue;
 			
-			let distance = this.data.get( 'dead' ) || !this.data.get( 'fright' )
+			let distance = this.getData( 'dead' ) || !this.getData( 'fright' )
 				? Phaser.Math.Distance.Squared(
 					openDirections[ direction ].x,
 					openDirections[ direction ].y,
@@ -130,7 +144,7 @@ export default class Ghost extends Entity {
 	}
 	
 	updateAnimation() {
-		if ( this.data.get( 'dead' ) ) {
+		if ( this.getData( 'dead' ) ) {
 			this.anims.stop();
 			if ( this.body.velocity.x > 0 ) {
 				this.setFrame( 78 );
@@ -141,15 +155,15 @@ export default class Ghost extends Entity {
 			} else if ( this.body.velocity.y > 0 ) {
 				this.setFrame( 81 );
 			}
-		} else if ( this.data.get( 'fright' ) ) {
-			this.play( `ghost-fright${this.data.get( 'fright' ) === 2 ? '' : '-quick'}`, true );
+		} else if ( this.getData( 'fright' ) ) {
+			this.play( `ghost-fright${this.getData( 'fright' ) === 2 ? '' : '-quick'}`, true );
 		} else {
 			super.updateAnimation();
 		}
 	}
 	
 	updateVelocity() {
-		if ( !this.data.get( 'home' ) ) {
+		if ( !this.getData( 'home' ) ) {
 			super.updateVelocity();
 		} else {
 			this.setVelocity( 0 );
@@ -162,7 +176,7 @@ export default class Ghost extends Entity {
 	}
 	
 	getSpeed() {
-		return this.data.get( 'dead' ) ? super.getSpeed() * 2 : super.getSpeed();
+		return this.getData( 'dead' ) ? super.getSpeed() * 2 : super.getSpeed() * .8;
 	}
 	
 }

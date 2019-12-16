@@ -9,12 +9,12 @@ export default class Blinky extends Ghost {
 		super( instance, x, y, 'blinky', props, 56 );
 		
 		this.instance.on( 'reset', () => {
-			this.data.set( 'home', false );
+			this.setData( 'home', false );
 		} );
 	}
 	
 	updateTarget() {
-		const pacman = this.instance.data.get( 'pacman' ) as Entity;
+		const pacman = this.instance.getData( 'pacman' ) as Entity;
 		this.target.setFromObject( this.scene.map.worldToTileXY( pacman.x, pacman.y ) );
 	}
 	
