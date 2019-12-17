@@ -10,6 +10,7 @@ export default class Controller extends Phaser.GameObjects.GameObject {
 		down:  Phaser.Input.Keyboard.KeyCodes.S,
 		left:  Phaser.Input.Keyboard.KeyCodes.A,
 		right: Phaser.Input.Keyboard.KeyCodes.D,
+		mute:  Phaser.Input.Keyboard.KeyCodes.M,
 		space: Phaser.Input.Keyboard.KeyCodes.SPACE,
 		one:   Phaser.Input.Keyboard.KeyCodes.ONE,
 		two:   Phaser.Input.Keyboard.KeyCodes.TWO,
@@ -19,14 +20,17 @@ export default class Controller extends Phaser.GameObjects.GameObject {
 	constructor( scene: Phaser.Scene ) {
 		super( scene, 'controller' );
 		
-		this.controls.up.on( Phaser.Input.Keyboard.Events.DOWN,
-			() => this.scene.runner.instances.forEach( instance => instance.data.get( 'pacman' ).nextDirection = Phaser.UP ) );
-		this.controls.down.on( Phaser.Input.Keyboard.Events.DOWN,
-			() => this.scene.runner.instances.forEach( instance => instance.data.get( 'pacman' ).nextDirection = Phaser.DOWN ) );
-		this.controls.left.on( Phaser.Input.Keyboard.Events.DOWN,
-			() => this.scene.runner.instances.forEach( instance => instance.data.get( 'pacman' ).nextDirection = Phaser.LEFT ) );
-		this.controls.right.on( Phaser.Input.Keyboard.Events.DOWN,
-			() => this.scene.runner.instances.forEach( instance => instance.data.get( 'pacman' ).nextDirection = Phaser.RIGHT ) );
+		// this.controls.up.on( Phaser.Input.Keyboard.Events.DOWN,
+		// 	() => this.scene.runner.instances.forEach( instance => instance.data.get( 'pacman' ).nextDirection = Phaser.UP ) );
+		// this.controls.down.on( Phaser.Input.Keyboard.Events.DOWN,
+		// 	() => this.scene.runner.instances.forEach( instance => instance.data.get( 'pacman' ).nextDirection = Phaser.DOWN ) );
+		// this.controls.left.on( Phaser.Input.Keyboard.Events.DOWN,
+		// 	() => this.scene.runner.instances.forEach( instance => instance.data.get( 'pacman' ).nextDirection = Phaser.LEFT ) );
+		// this.controls.right.on( Phaser.Input.Keyboard.Events.DOWN,
+		// 	() => this.scene.runner.instances.forEach( instance => instance.data.get( 'pacman' ).nextDirection = Phaser.RIGHT ) );
+		
+		this.controls.mute.on( Phaser.Input.Keyboard.Events.DOWN,
+			() => this.scene.sound.mute = !this.scene.sound.mute );
 		
 		this.controls.space.on( Phaser.Input.Keyboard.Events.DOWN,
 			() => this.scene.scene.pause() );

@@ -54,7 +54,7 @@ export default class Pacman extends Entity {
 			}
 		} );
 		this.instance.on( 'reset', () => this.prevTile = null );
-		this.instance.on( 'end', () => {
+		this.instance.on( 'death', () => {
 			this.anims.stop();
 			this.scene.time.delayedCall( 1000,
 				() => {

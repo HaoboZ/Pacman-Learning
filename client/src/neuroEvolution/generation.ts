@@ -72,10 +72,8 @@ export default class Generation {
 			// Perform mutation on some weights.
 			for ( const i in data.network.weights ) {
 				if ( Math.random() <= this.neat.options.mutationRate ) {
-					data.network.weights[ i ] += Math.random() *
-						this.neat.options.mutationRange *
-						2 -
-						this.neat.options.mutationRange;
+					data.network.weights[ i ] += Math.random()
+						* this.neat.options.mutationRange * 2 - this.neat.options.mutationRange;
 				}
 			}
 			datas.push( data );

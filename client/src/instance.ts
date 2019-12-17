@@ -1,8 +1,5 @@
 import Entity from './entities';
 import Blinky from './entities/ghost/blinky';
-import Clyde from './entities/ghost/clyde';
-import Inky from './entities/ghost/inky';
-import Pinky from './entities/ghost/pinky';
 import Pacman from './entities/pacman';
 import Main from './main';
 
@@ -19,6 +16,10 @@ export default class Instance extends Phaser.GameObjects.GameObject {
 	entities = this.scene.physics.add.group( { runChildUpdate: true } );
 	ghosts = this.scene.add.group();
 	
+	idleTimer: Phaser.Time.TimerEvent;
+	
+	//////////////////////////////////////////////////
+	
 	constructor( scene: Phaser.Scene, index = 0 ) {
 		super( scene, 'instance' );
 		this.setDataEnabled();
@@ -34,9 +35,7 @@ export default class Instance extends Phaser.GameObjects.GameObject {
 				ghost.setData( 'fright', 0 );
 				ghost.setData( 'dead', true );
 			} else if ( !ghost.getData( 'dead' ) ) {
-				// this.emit( 'end', Math.floor( ( this.scene.time.now - this.scene.startTime ) / 100 ) );
-				this.emit( 'end', this.score );
-				this.setData( 'end', true );
+				this.emit( 'end' );
 			}
 		} );
 		
@@ -49,10 +48,10 @@ export default class Instance extends Phaser.GameObjects.GameObject {
 		this.scene.map.getObjectLayer( 'entities' ).objects.forEach( ( object ) => {
 			const SpriteClass = {
 				'pacman': Pacman,
-				'blinky': Blinky,
-				'pinky':  Pinky,
-				'inky':   Inky,
-				'clyde':  Clyde
+				'blinky': Blinky
+				// 'pinky':  Pinky,
+				// 'inky':   Inky,
+				// 'clyde':  Clyde
 			}[ object.name ];
 			if ( SpriteClass ) {
 				const sprite: Phaser.Physics.Arcade.Sprite = new SpriteClass( this, object.x, object.y,
@@ -78,6 +77,7 @@ export default class Instance extends Phaser.GameObjects.GameObject {
 		this.on( 'pacmanEatPellet', () => {
 			++this.score;
 			this.setGhostTimer();
+			this.setIdleTimer();
 		} );
 		this.on( 'reset', keep => {
 			this.setData( 'dots', 244 );
@@ -94,11 +94,18 @@ export default class Instance extends Phaser.GameObjects.GameObject {
 				}
 			} );
 			this.setGhostTimer();
+			this.setIdleTimer();
 			
 			if ( !keep ) {
 				this.score = 0;
 			}
 			this.setData( 'end', false );
+		} );
+		this.on( 'end', () => {
+			if ( !this.getData( 'end' ) ) {
+				this.setData( 'end', true );
+				this.emit( 'death' );
+			}
 		} );
 	}
 	
@@ -111,7 +118,7 @@ export default class Instance extends Phaser.GameObjects.GameObject {
 	//////////////////////////////////////////////////
 	
 	setGhostTimer() {
-		if ( this.ghostTimer ) this.ghostTimer.destroy();
+		if ( this.ghostTimer ) this.ghostTimer.remove();
 		this.ghostTimer = this.scene.time.delayedCall( 4500, () => {
 			const res = { left: false };
 			this.emit( 'ghostLeave', res );
@@ -119,6 +126,11 @@ export default class Instance extends Phaser.GameObjects.GameObject {
 				this.setGhostTimer();
 			}
 		} );
+	}
+	
+	setIdleTimer() {
+		if ( this.idleTimer ) this.idleTimer.remove();
+		this.idleTimer = this.scene.time.delayedCall( 15000, () => this.emit( 'end' ) );
 	}
 	
 }
