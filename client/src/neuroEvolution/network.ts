@@ -40,7 +40,9 @@ export default class Network {
 		for ( const i in hiddens ) {
 			// Repeat same process as first layer for each hidden layer.
 			const layer = new Layer( this.neat, index );
+			// noinspection JSUnfilteredForInLoop
 			layer.populate( hiddens[ i ], previousNeurons );
+			// noinspection JSUnfilteredForInLoop
 			previousNeurons = hiddens[ i ];
 			this.layers.push( layer );
 			index++;
@@ -91,6 +93,7 @@ export default class Network {
 		for ( const i in save.neurons ) {
 			// Create and populate layers.
 			const layer = new Layer( this.neat, index );
+			// noinspection JSUnfilteredForInLoop
 			layer.populate( save.neurons[ i ], previousNeurons );
 			for ( const j in layer.neurons ) {
 				for ( const k in layer.neurons[ j ].weights ) {
@@ -100,6 +103,7 @@ export default class Network {
 					indexWeights++; // Increment index of flat array.
 				}
 			}
+			// noinspection JSUnfilteredForInLoop
 			previousNeurons = save.neurons[ i ];
 			index++;
 			this.layers.push( layer );
@@ -115,7 +119,9 @@ export default class Network {
 	compute( inputs ) {
 		// Set the value of each Neuron in the input layer.
 		for ( const i in inputs ) {
+			// noinspection JSUnfilteredForInLoop
 			if ( this.layers[ 0 ] && this.layers[ 0 ].neurons[ i ] ) {
+				// noinspection JSUnfilteredForInLoop
 				this.layers[ 0 ].neurons[ i ].value = inputs[ i ];
 			}
 		}

@@ -45,7 +45,7 @@ export default class Pacman extends Entity {
 		super.createEvents( x, y, frame );
 		this.instance.on( 'pacmanEatPellet', dots => {
 			if ( !dots ) {
-				this.instance.emit( 'reset', true );
+				this.instance.emit( 'end' );
 			}
 			if ( this.instance.index === 0 ) {
 				if ( !this.eatSound.isPlaying ) {

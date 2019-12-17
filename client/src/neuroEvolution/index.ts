@@ -11,48 +11,49 @@ export default class NeuroEvolution {
 			const ap = -a;
 			return ( 1 / ( 1 + Math.exp( ap ) ) );
 		},
-		//Returns a random value between -1 and 1.
 		randomClamped() {
 			return Math.random() * 2 - 1;
 		},
 		// constious factors and parameters (along with default values).
-		network:         [ 1, [ 1 ], 1 ], // Perceptron network structure (1 hidden
-		// layer).
-		population:      50, // Population by generation.
-		elitism:         0.2, // Best networks kepts unchanged for the next
-		// generation (rate).
-		randomBehaviour: 0.2, // New random networks for the next generation
-		// (rate).
-		mutationRate:    0.1, // Mutation rate on the weights of synapses.
-		mutationRange:   0.5, // Interval of the mutation changes on the
-		// synapse weight.
-		historic:        0, // Latest generations saved.
-		lowHistoric:     false, // Only save score (not the network).
-		scoreSort:       -1, // Sort order (-1 = desc, 1 = asc).
-		nbChild:         1 // Number of children by breeding.
+		network:         [ 1, [ 1 ], 1 ],
+		population:      50,
+		elitism:         0.2,
+		randomBehaviour: 0.2,
+		mutationRate:    0.1,
+		mutationRange:   0.5,
+		historic:        0,
+		lowHistoric:     false,
+		scoreSort:       -1,
+		nbChild:         1
 	};
 	
 	generations = new Generations( this );
 	
 	constructor( options: {
+		// Logistic activation function.
 		activation?
 		//Returns a random value between -1 and 1.
 		randomClamped?
-		// constious factors and parameters (along with default values).
-		network? // Perceptron network structure (1 hidden
-		// layer).
-		population? // Population by generation.
-		elitism? // Best networks kepts unchanged for the next
-		// generation (rate).
-		randomBehaviour? // New random networks for the next generation
-		// (rate).
-		mutationRate? // Mutation rate on the weights of synapses.
-		mutationRange? // Interval of the mutation changes on the
-		// synapse weight.
-		historic? // Latest generations saved.
-		lowHistoric? // Only save score (not the network).
-		scoreSort? // Sort order (-1 = desc, 1 = asc).
-		nbChild? // Number of children by breeding.
+		// Perceptron network structure (1 hidden layer).
+		network?
+		// Population by generation.
+		population?
+		// Best networks kepts unchanged for the next generation (rate).
+		elitism?
+		// New random networks for the next generation (rate).
+		randomBehaviour?
+		// Mutation rate on the weights of synapses.
+		mutationRate?
+		// Interval of the mutation changes on the synapse weight.
+		mutationRange?
+		// Latest generations saved.
+		historic?
+		// Only save score (not the network).
+		lowHistoric?
+		// Sort order (-1 = desc, 1 = asc).
+		scoreSort?
+		// Number of children by breeding.
+		nbChild?
 	} ) {
 		this.options = { ...this.options, ...options };
 	}

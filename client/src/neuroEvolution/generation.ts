@@ -65,6 +65,7 @@ export default class Generation {
 				// 0.5 is the crossover factor.
 				// FIXME Really should be a predefined constant.
 				if ( Math.random() <= 0.5 ) {
+					// noinspection JSUnfilteredForInLoop
 					data.network.weights[ i ] = g2.network.weights[ i ];
 				}
 			}
@@ -72,6 +73,7 @@ export default class Generation {
 			// Perform mutation on some weights.
 			for ( const i in data.network.weights ) {
 				if ( Math.random() <= this.neat.options.mutationRate ) {
+					// noinspection JSUnfilteredForInLoop
 					data.network.weights[ i ] += Math.random()
 						* this.neat.options.mutationRange * 2 - this.neat.options.mutationRange;
 				}
@@ -92,7 +94,7 @@ export default class Generation {
 		
 		for ( let i = 0; i < Math.round( this.neat.options.elitism * this.neat.options.population ); i++ ) {
 			if ( nexts.length < this.neat.options.population ) {
-				// Push a deep copy of ith Genome's Nethwork.
+				// Push a deep copy of ith Genome's Network.
 				nexts.push( JSON.parse( JSON.stringify( this.genomes[ i ].network ) ) );
 			}
 		}
@@ -100,6 +102,7 @@ export default class Generation {
 		for ( let i = 0; i < Math.round( this.neat.options.randomBehaviour * this.neat.options.population ); i++ ) {
 			const n = JSON.parse( JSON.stringify( this.genomes[ 0 ].network ) );
 			for ( const k in n.weights ) {
+				// noinspection JSUnfilteredForInLoop
 				n.weights[ k ] = this.neat.options.randomClamped();
 			}
 			if ( nexts.length < this.neat.options.population ) {
@@ -117,7 +120,7 @@ export default class Generation {
 					nexts.push( childs[ c ].network );
 					if ( nexts.length >= this.neat.options.population ) {
 						// Return once number of children is equal to the
-						// population by generatino value.
+						// population by generation value.
 						return nexts;
 					}
 				}

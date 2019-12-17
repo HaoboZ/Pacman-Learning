@@ -5,14 +5,15 @@ import Network from './neuroEvolution/network';
 import Timeline from './timeline';
 
 
-export default class Runner extends Phaser.GameObjects.GameObject {
+export default class Runner {
 	
 	scene: Main;
 	
 	neuvol = new NeuroEvolution( {
-		population: 200,
-		
-		network: [ 8, [ 10 ], 2 ]
+		population:    200,
+		mutationRange: .8,
+		mutationRate:  .2,
+		network:       [ 8, [ 10 ], 2 ]
 	} );
 	gen: Network[];
 	
@@ -24,8 +25,8 @@ export default class Runner extends Phaser.GameObjects.GameObject {
 	alive: number = 0;
 	aliveText = this.scene.add.text( 85, 0, 'alive: ' );
 	
-	constructor( scene: Phaser.Scene ) {
-		super( scene, 'runner' );
+	constructor( scene: Main ) {
+		this.scene = scene;
 		
 		const timeline = new Timeline( this );
 		

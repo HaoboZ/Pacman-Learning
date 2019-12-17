@@ -79,7 +79,7 @@ export default class Instance extends Phaser.GameObjects.GameObject {
 			this.setGhostTimer();
 			this.setIdleTimer();
 		} );
-		this.on( 'reset', keep => {
+		this.on( 'reset', () => {
 			this.setData( 'dots', 244 );
 			[ 7, 20, 7, 20, 5, 20, 5 ].reduce( ( sum, val, index ) => {
 				sum += val;
@@ -96,9 +96,7 @@ export default class Instance extends Phaser.GameObjects.GameObject {
 			this.setGhostTimer();
 			this.setIdleTimer();
 			
-			if ( !keep ) {
-				this.score = 0;
-			}
+			this.score = 0;
 			this.setData( 'end', false );
 		} );
 		this.on( 'end', () => {

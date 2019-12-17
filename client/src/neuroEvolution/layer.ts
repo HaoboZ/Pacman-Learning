@@ -24,7 +24,7 @@ export default class Layer {
 	/**
 	 * Populate the Layer with a set of randomly weighted Neurons.
 	 *
-	 * Each Neuron be initialied with nbInputs inputs with a random clamped
+	 * Each Neuron be initialized with nbInputs inputs with a random clamped
 	 * value.
 	 *
 	 * @param nbNeurons - Number of neurons.
