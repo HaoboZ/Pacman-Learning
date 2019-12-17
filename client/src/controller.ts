@@ -14,7 +14,8 @@ export default class Controller extends Phaser.GameObjects.GameObject {
 		space: Phaser.Input.Keyboard.KeyCodes.SPACE,
 		one:   Phaser.Input.Keyboard.KeyCodes.ONE,
 		two:   Phaser.Input.Keyboard.KeyCodes.TWO,
-		three: Phaser.Input.Keyboard.KeyCodes.THREE
+		three: Phaser.Input.Keyboard.KeyCodes.THREE,
+		four:  Phaser.Input.Keyboard.KeyCodes.FOUR
 	} ) as any;
 	
 	constructor( scene: Phaser.Scene ) {
@@ -41,6 +42,8 @@ export default class Controller extends Phaser.GameObjects.GameObject {
 			() => this.scene.time.timeScale = this.scene.timeScale = 2 );
 		this.controls.three.on( Phaser.Input.Keyboard.Events.DOWN,
 			() => this.scene.time.timeScale = this.scene.timeScale = 4 );
+		this.controls.four.on( Phaser.Input.Keyboard.Events.DOWN,
+			() => this.scene.time.timeScale = this.scene.timeScale = 8 );
 	}
 	
 }
