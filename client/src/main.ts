@@ -19,9 +19,13 @@ export default class Main extends Phaser.Scene {
 			frameWidth:  16,
 			frameHeight: 16
 		} );
+		this.load.audio( 'eating', 'assets/sounds/eating.mp3' );
+		this.load.audio( 'miss', 'assets/sounds/miss.mp3' );
 	}
 	
 	create() {
+		window.Phaser = Phaser;
+		
 		this.map = this.add.tilemap( 'map' );
 		const tiles = this.map.addTilesetImage( 'maze', 'tiles' );
 		
@@ -44,6 +48,8 @@ export default class Main extends Phaser.Scene {
 			} );
 			this.startTime = this.time.now;
 		} );
+		
+		this.sound.pauseOnBlur = false;
 		
 		this.debugGraphic = this.add.graphics();
 		this.debugGraphic.setDepth( Number.MAX_VALUE );

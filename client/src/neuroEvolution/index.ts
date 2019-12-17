@@ -76,7 +76,7 @@ export default class NeuroEvolution {
 			this.generations.firstGeneration() : this.generations.nextGeneration() as any[];
 		
 		// Create Networks from the current Generation.
-		const nns = [];
+		const nns: Network[] = [];
 		for ( const i in networks ) {
 			const nn = new Network( this );
 			nn.setSave( networks[ i ] );

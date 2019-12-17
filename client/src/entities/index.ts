@@ -12,11 +12,23 @@ export default class Entity extends Phaser.Physics.Arcade.Sprite {
 	nextDirection = Phaser.NONE;
 	direction = Phaser.NONE;
 	
+	target = new Phaser.Math.Vector2();
+	
+	//////////////////////////////////////////////////
+	
 	constructor( instance: Instance, x, y, name: string, frame: number ) {
 		super( instance.scene, x + 8, y + 8, 'sprites', frame );
 		this.instance = instance;
 		this.name = name;
 		
+		this.createAnims( frame );
+		this.createEvents( x, y, frame );
+	}
+	
+	createAnims( frame ) {
+	}
+	
+	createEvents( x, y, frame ) {
 		this.instance.on( 'reset', () => {
 			this.setPosition( x + 8, y + 8 );
 			this.direction = this.nextDirection = Phaser.NONE;
@@ -25,12 +37,10 @@ export default class Entity extends Phaser.Physics.Arcade.Sprite {
 			this.setActive( true );
 			this.setVisible( true );
 		} );
-		this.instance.on( 'end', () => {
-			this.setVelocity( 0 );
-		} );
+		this.instance.on( 'end', () => this.setVelocity( 0 ) );
 	}
 	
-	createAnims( name, frames: { right: integer[], left: integer[], up: integer[], down: integer[] } ) {
+	createDirectionAnims( name, frames: { right: integer[], left: integer[], up: integer[], down: integer[] } ) {
 		createAnimExists( this.scene, {
 			key:       `${name}-right`,
 			frames:    this.scene.anims.generateFrameNumbers( 'sprites', { frames: frames.right } ),
@@ -57,25 +67,16 @@ export default class Entity extends Phaser.Physics.Arcade.Sprite {
 		} );
 	}
 	
+	//////////////////////////////////////////////////
+	
 	update() {
 		this.updateAnimation();
 		this.updateDirection();
 		this.updateVelocity();
+		this.updateSnap();
 	}
 	
 	updateAnimation() {
-		if ( this.body.position.equals( this.body.prev ) ) {
-			switch ( this.direction ) {
-			case Phaser.UP:
-			case Phaser.DOWN:
-				this.x = Phaser.Math.Snap.To( this.x, this.scene.map.tileWidth, this.scene.map.tileWidth / 2 );
-				break;
-			case Phaser.LEFT:
-			case Phaser.RIGHT:
-				this.y = Phaser.Math.Snap.To( this.y, this.scene.map.tileHeight, this.scene.map.tileHeight / 2 );
-				break;
-			}
-		}
 		if ( this.body.velocity.x < 0 ) {
 			this.play( `${this.name}-left`, true );
 		} else if ( this.body.velocity.x > 0 ) {
@@ -94,19 +95,20 @@ export default class Entity extends Phaser.Physics.Arcade.Sprite {
 	
 	updateDirection() {
 		if ( this.direction !== this.nextDirection ) {
-			if ( this.direction === oppositeDirection( this.nextDirection ) ) {
-				this.direction = this.nextDirection;
-			} else {
+			const directionTile = this.getOpenDirections( this.scene.map.worldToTileXY( this.x, this.y ) )[ this.nextDirection ];
+			if ( !directionTile || directionTile.index === -1 ) {
 				switch ( this.nextDirection ) {
 				case Phaser.RIGHT:
 				case Phaser.LEFT:
-					if ( !Phaser.Math.Fuzzy.Equal( this.body.x, this.body.prev.x ) ) {
+					const tileCenterY = Math.floor( this.body.center.y / 8 ) * 8;
+					if ( ( tileCenterY - this.body.y ) * ( tileCenterY - this.body.prev.y ) <= 0 ) {
 						this.direction = this.nextDirection;
 					}
 					break;
 				case Phaser.UP:
 				case Phaser.DOWN:
-					if ( !Phaser.Math.Fuzzy.Equal( this.body.y, this.body.prev.y ) ) {
+					const tileCenterX = Math.floor( this.body.center.x / 8 ) * 8;
+					if ( ( tileCenterX - this.body.x ) * ( tileCenterX - this.body.prev.x ) <= 0 ) {
 						this.direction = this.nextDirection;
 					}
 					break;
@@ -115,15 +117,76 @@ export default class Entity extends Phaser.Physics.Arcade.Sprite {
 		}
 	}
 	
+	updateSnap() {
+		switch ( this.direction ) {
+		case Phaser.UP:
+		case Phaser.DOWN:
+			this.setX( Phaser.Math.Snap.To( this.x, this.scene.map.tileWidth, this.scene.map.tileWidth / 2 ) );
+			break;
+		case Phaser.LEFT:
+		case Phaser.RIGHT:
+			this.setY( Phaser.Math.Snap.To( this.y, this.scene.map.tileHeight, this.scene.map.tileHeight / 2 ) );
+			break;
+		}
+	}
+	
 	updateVelocity() {
 		const velocity = new Phaser.Math.Vector2(
-			+( this.nextDirection === Phaser.RIGHT || this.direction === Phaser.RIGHT ) - +( this.nextDirection === Phaser.LEFT || this.direction === Phaser.LEFT ),
-			+( this.nextDirection === Phaser.DOWN || this.direction === Phaser.DOWN ) - +( this.nextDirection === Phaser.UP || this.direction === Phaser.UP ) );
+			+( this.direction === Phaser.RIGHT ) - +( this.direction === Phaser.LEFT ),
+			+( this.direction === Phaser.DOWN ) - +( this.direction === Phaser.UP ) );
 		this.body.velocity.setFromObject( velocity ).scale( this.getSpeed() );
 	}
 	
+	//////////////////////////////////////////////////
+	
 	getSpeed() {
 		return 50 * this.scene.timeScale;
+	}
+	
+	getOpenDirections( tile: Phaser.Math.Vector2 ) {
+		return {
+			[ Phaser.RIGHT ]: this.scene.map.getTileAt( tile.x + 1, tile.y, true ),
+			[ Phaser.LEFT ]:  this.scene.map.getTileAt( tile.x - 1, tile.y, true ),
+			[ Phaser.UP ]:    this.scene.map.getTileAt( tile.x, tile.y - 1, true ),
+			[ Phaser.DOWN ]:  this.scene.map.getTileAt( tile.x, tile.y + 1, true )
+		};
+	}
+	
+	randomNextDirection( tile: Phaser.Math.Vector2 ) {
+		const openDirections = this.getOpenDirections( tile ),
+		      directions     = [];
+		for ( const direction in openDirections ) {
+			if ( !openDirections[ direction ] ) continue;
+			if ( openDirections[ direction ].index !== -1 ) continue;
+			if ( +direction === oppositeDirection( this.nextDirection ) ) continue;
+			directions.push( +direction );
+		}
+		
+		if ( directions.length ) {
+			this.nextDirection = Phaser.Utils.Array.GetRandom( directions );
+		}
+	}
+	
+	targetNextDirection( tile: Phaser.Math.Vector2 ) {
+		const openDirections = this.getOpenDirections( tile );
+		let nearestDirection = this.nextDirection,
+		    nearestDistance  = Infinity;
+		for ( const direction in openDirections ) {
+			if ( !openDirections[ direction ] ) continue;
+			if ( openDirections[ direction ].index !== -1 ) continue;
+			if ( +direction === oppositeDirection( this.nextDirection ) ) continue;
+			
+			let distance = Phaser.Math.Distance.Squared(
+				openDirections[ direction ].x,
+				openDirections[ direction ].y,
+				this.target.x,
+				this.target.y );
+			if ( distance < nearestDistance ) {
+				nearestDirection = +direction;
+				nearestDistance = distance;
+			}
+		}
+		this.nextDirection = nearestDirection;
 	}
 	
 }

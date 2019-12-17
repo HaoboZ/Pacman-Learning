@@ -13,7 +13,7 @@ export default class Instance extends Phaser.GameObjects.GameObject {
 	index: number;
 	
 	score: number;
-	pellets: number[];
+	pellets = [ ...this.scene.data.get( 'dotTiles' ) ];
 	ghostTimer: Phaser.Time.TimerEvent;
 	
 	entities = this.scene.physics.add.group( { runChildUpdate: true } );
@@ -23,7 +23,6 @@ export default class Instance extends Phaser.GameObjects.GameObject {
 		super( scene, 'instance' );
 		this.setDataEnabled();
 		this.index = index;
-		this.pellets = [ ...this.scene.data.get( 'dotTiles' ) ];
 		
 		this.addEntitiesFromLayers();
 		
@@ -41,33 +40,7 @@ export default class Instance extends Phaser.GameObjects.GameObject {
 			}
 		} );
 		
-		this.setGhostTimer();
-		this.on( 'pacmanEatPellet', () => {
-			++this.score;
-			this.setGhostTimer();
-		} );
-		this.on( 'reset', keep => {
-			this.setData( 'dots', 244 );
-			[ 7, 20, 7, 20, 5, 20, 5 ].reduce( ( sum, val, index ) => {
-				sum += val;
-				this.scene.time.delayedCall( sum * 1000, () => {
-					this.emit( 'ghostModeChange', index % 2 === 1 );
-				} );
-				return sum;
-			}, 0 );
-			this.pellets.forEach( ( tile, index ) => {
-				const val = this.scene.data.get( 'dotTiles' )[ index ];
-				if ( val ) {
-					this.pellets[ index ] = val;
-				}
-			} );
-			this.setGhostTimer();
-			
-			if ( !keep ) {
-				this.score = 0;
-			}
-			this.setData( 'end', false );
-		} );
+		this.createEvents();
 		
 		this.setData( 'end', true );
 	}
@@ -101,9 +74,41 @@ export default class Instance extends Phaser.GameObjects.GameObject {
 		} );
 	}
 	
+	createEvents() {
+		this.on( 'pacmanEatPellet', () => {
+			++this.score;
+			this.setGhostTimer();
+		} );
+		this.on( 'reset', keep => {
+			this.setData( 'dots', 244 );
+			[ 7, 20, 7, 20, 5, 20, 5 ].reduce( ( sum, val, index ) => {
+				sum += val;
+				this.scene.time.delayedCall( sum * 1000,
+					() => this.emit( 'ghostModeChange', index % 2 === 1 ) );
+				return sum;
+			}, 0 );
+			this.pellets.forEach( ( tile, index ) => {
+				const val = this.scene.data.get( 'dotTiles' )[ index ];
+				if ( val ) {
+					this.pellets[ index ] = val;
+				}
+			} );
+			this.setGhostTimer();
+			
+			if ( !keep ) {
+				this.score = 0;
+			}
+			this.setData( 'end', false );
+		} );
+	}
+	
+	//////////////////////////////////////////////////
+	
 	update() {
 		this.scene.physics.world.wrap( this.entities, 0 );
 	}
+	
+	//////////////////////////////////////////////////
 	
 	setGhostTimer() {
 		if ( this.ghostTimer ) this.ghostTimer.destroy();

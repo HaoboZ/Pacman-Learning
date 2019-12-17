@@ -10,3 +10,7 @@ Remake simple pacman, hopefully add ML in future.
 0. `npm install`
 0. `npm run dev`
 0. go to localhost
+
+## TODO
+
+learning chart

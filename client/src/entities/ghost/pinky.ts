@@ -7,13 +7,16 @@ export default class Pinky extends Ghost {
 	
 	constructor( instance: Instance, x, y, props ) {
 		super( instance, x, y, 'pinky', props, 70 );
-		
-		this.instance.on( 'reset', () => {
-			this.scene.time.delayedCall( 500, () => {
-				this.setData( 'home', false );
-			} );
-		} );
 	}
+	
+	createEvents( x, y, frame ) {
+		super.createEvents( x, y, frame );
+		this.instance.on( 'reset',
+			() => this.scene.time.delayedCall( 500,
+				() => this.setData( 'home', false ) ) );
+	}
+	
+	//////////////////////////////////////////////////
 	
 	updateTarget() {
 		const pacman = this.instance.getData( 'pacman' ) as Entity;

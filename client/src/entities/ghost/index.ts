@@ -5,18 +5,20 @@ import Entity from '../index';
 
 export default class Ghost extends Entity {
 	
-	target = new Phaser.Math.Vector2();
-	
 	home: Phaser.Math.Vector2;
 	
 	prevTile: Phaser.Math.Vector2;
+	
+	//////////////////////////////////////////////////
 	
 	constructor( instance: Instance, x, y, name: string, props, frame: number ) {
 		super( instance, x, y, name, frame );
 		this.home = new Phaser.Math.Vector2( props.homeX, props.homeY );
 		this.setDataEnabled();
-		
-		this.createAnims( this.name, {
+	}
+	
+	createAnims( frame ) {
+		this.createDirectionAnims( this.name, {
 			right: [ frame, frame + 1 ],
 			left:  [ frame + 2, frame + 3 ],
 			up:    [ frame + 4, frame + 5 ],
@@ -36,11 +38,10 @@ export default class Ghost extends Entity {
 			frameRate: 15,
 			repeat:    Phaser.FOREVER
 		} );
-		
-		this.createEvents();
 	}
 	
-	createEvents() {
+	createEvents( x, y, frame ) {
+		super.createEvents( x, y, frame );
 		this.instance.on( 'reset', () => {
 			this.setData( 'home', true );
 			this.setData( 'mode', true );
@@ -75,9 +76,8 @@ export default class Ghost extends Entity {
 		} );
 		this.instance.on( 'end', () => {
 			this.setActive( false );
-			this.scene.time.delayedCall( 1000, () => {
-				this.setVisible( false );
-			} );
+			this.scene.time.delayedCall( 1000,
+				() => this.setVisible( false ) );
 		} );
 		this.on( 'changedata-home', ( _, val ) => {
 			if ( !val ) {
@@ -85,6 +85,8 @@ export default class Ghost extends Entity {
 			}
 		} );
 	}
+	
+	//////////////////////////////////////////////////
 	
 	update() {
 		const tile = this.scene.map.worldToTileXY( this.x, this.y );
@@ -111,32 +113,11 @@ export default class Ghost extends Entity {
 			this.updateTarget();
 		}
 		
-		const openDirections = {
-			[ Phaser.RIGHT ]: this.scene.map.getTileAt( tile.x + 1, tile.y, true ),
-			[ Phaser.LEFT ]:  this.scene.map.getTileAt( tile.x - 1, tile.y, true ),
-			[ Phaser.UP ]:    this.scene.map.getTileAt( tile.x, tile.y - 1, true ),
-			[ Phaser.DOWN ]:  this.scene.map.getTileAt( tile.x, tile.y + 1, true )
-		};
-		let nearestDirection = this.nextDirection,
-		    nearestDistance  = Infinity;
-		for ( const direction in openDirections ) {
-			if ( !openDirections[ direction ] ) continue;
-			if ( openDirections[ direction ].index !== -1 ) continue;
-			if ( +direction === oppositeDirection( this.nextDirection ) ) continue;
-			
-			let distance = this.getData( 'dead' ) || !this.getData( 'fright' )
-				? Phaser.Math.Distance.Squared(
-					openDirections[ direction ].x,
-					openDirections[ direction ].y,
-					this.target.x,
-					this.target.y )
-				: Math.random();
-			if ( distance < nearestDistance ) {
-				nearestDirection = +direction;
-				nearestDistance = distance;
-			}
+		if ( this.getData( 'dead' ) || !this.getData( 'fright' ) ) {
+			this.targetNextDirection( tile );
+		} else {
+			this.randomNextDirection( tile );
 		}
-		this.nextDirection = nearestDirection;
 	}
 	
 	updateTarget() {
@@ -146,14 +127,19 @@ export default class Ghost extends Entity {
 	updateAnimation() {
 		if ( this.getData( 'dead' ) ) {
 			this.anims.stop();
-			if ( this.body.velocity.x > 0 ) {
+			switch ( this.direction ) {
+			case Phaser.LEFT:
 				this.setFrame( 78 );
-			} else if ( this.body.velocity.x < 0 ) {
+				break;
+			case Phaser.RIGHT:
 				this.setFrame( 79 );
-			} else if ( this.body.velocity.y < 0 ) {
+				break;
+			case Phaser.UP:
 				this.setFrame( 80 );
-			} else if ( this.body.velocity.y > 0 ) {
+				break;
+			case Phaser.DOWN:
 				this.setFrame( 81 );
+				break;
 			}
 		} else if ( this.getData( 'fright' ) ) {
 			this.play( `ghost-fright${this.getData( 'fright' ) === 2 ? '' : '-quick'}`, true );
@@ -169,6 +155,14 @@ export default class Ghost extends Entity {
 			this.setVelocity( 0 );
 		}
 	}
+	
+	updateSnap() {
+		if ( !this.getData( 'home' ) && !this.getData( 'dead' ) ) {
+			super.updateSnap();
+		}
+	}
+	
+	//////////////////////////////////////////////////
 	
 	reverse() {
 		this.nextDirection = oppositeDirection( this.direction );
