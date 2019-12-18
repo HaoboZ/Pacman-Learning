@@ -24,10 +24,4 @@ Given a longer period of time, around 1000 gens, it seems that the network can b
 
 ## Controls
 
-Click into the window to start sound.  
-Press M to mute.  
-Press space to pause forever.  
-Press 1 for 1x speed.  
-Press 2 for 2x speed.  
-Press 3 for 4x speed.  
-Press 4 for 8x speed.(may cause movement errors)
+Control volume, pause and resume, and play speed with dat.gui controller.

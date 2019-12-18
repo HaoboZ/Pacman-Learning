@@ -1,26 +1,32 @@
+import * as dat from 'dat.gui';
+
 import Main from './main';
 
 
-export default class Controller extends Phaser.GameObjects.GameObject {
+export default class Controller {
 	
 	scene: Main;
 	
-	controls: { [ key: string ]: Phaser.Input.Keyboard.Key } = this.scene.input.keyboard.addKeys( {
-		up:    Phaser.Input.Keyboard.KeyCodes.W,
-		down:  Phaser.Input.Keyboard.KeyCodes.S,
-		left:  Phaser.Input.Keyboard.KeyCodes.A,
-		right: Phaser.Input.Keyboard.KeyCodes.D,
-		mute:  Phaser.Input.Keyboard.KeyCodes.M,
-		space: Phaser.Input.Keyboard.KeyCodes.SPACE,
-		one:   Phaser.Input.Keyboard.KeyCodes.ONE,
-		two:   Phaser.Input.Keyboard.KeyCodes.TWO,
-		three: Phaser.Input.Keyboard.KeyCodes.THREE,
-		four:  Phaser.Input.Keyboard.KeyCodes.FOUR
-	} ) as any;
+	gui = new dat.GUI();
 	
-	constructor( scene: Phaser.Scene ) {
-		super( scene, 'controller' );
+	// controls: { [ key: string ]: Phaser.Input.Keyboard.Key };
+	
+	constructor( scene: Main ) {
+		this.scene = scene;
 		
+		this.gui.add( this.scene.scene, 'pause' );
+		this.gui.add( this.scene.scene, 'resume' );
+		this.gui.add( this.scene.sound, 'mute' ).listen();
+		this.gui.add( this.scene, 'timeScale', .1, 4 )
+			.onChange( val => this.scene.time.timeScale = val );
+		
+		// this.controls = this.scene.input.keyboard.addKeys( {
+		// 	up:    Phaser.Input.Keyboard.KeyCodes.W,
+		// 	down:  Phaser.Input.Keyboard.KeyCodes.S,
+		// 	left:  Phaser.Input.Keyboard.KeyCodes.A,
+		// 	right: Phaser.Input.Keyboard.KeyCodes.D
+		// } ) as any
+		//
 		// this.controls.up.on( Phaser.Input.Keyboard.Events.DOWN,
 		// 	() => this.scene.runner.instances.forEach( instance => instance.data.get( 'pacman' ).nextDirection = Phaser.UP ) );
 		// this.controls.down.on( Phaser.Input.Keyboard.Events.DOWN,
@@ -29,21 +35,6 @@ export default class Controller extends Phaser.GameObjects.GameObject {
 		// 	() => this.scene.runner.instances.forEach( instance => instance.data.get( 'pacman' ).nextDirection = Phaser.LEFT ) );
 		// this.controls.right.on( Phaser.Input.Keyboard.Events.DOWN,
 		// 	() => this.scene.runner.instances.forEach( instance => instance.data.get( 'pacman' ).nextDirection = Phaser.RIGHT ) );
-		
-		this.controls.mute.on( Phaser.Input.Keyboard.Events.DOWN,
-			() => this.scene.sound.mute = !this.scene.sound.mute );
-		
-		this.controls.space.on( Phaser.Input.Keyboard.Events.DOWN,
-			() => this.scene.scene.pause() );
-		
-		this.controls.one.on( Phaser.Input.Keyboard.Events.DOWN,
-			() => this.scene.time.timeScale = this.scene.timeScale = 1 );
-		this.controls.two.on( Phaser.Input.Keyboard.Events.DOWN,
-			() => this.scene.time.timeScale = this.scene.timeScale = 2 );
-		this.controls.three.on( Phaser.Input.Keyboard.Events.DOWN,
-			() => this.scene.time.timeScale = this.scene.timeScale = 4 );
-		this.controls.four.on( Phaser.Input.Keyboard.Events.DOWN,
-			() => this.scene.time.timeScale = this.scene.timeScale = 8 );
 	}
 	
 }

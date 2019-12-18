@@ -10,7 +10,7 @@ export default class Runner {
 	scene: Main;
 	
 	neuvol = new NeuroEvolution( {
-		population:    200,
+		population:    1,
 		mutationRange: .8,
 		mutationRate:  .2,
 		network:       [ 8, [ 10 ], 2 ]
@@ -20,13 +20,16 @@ export default class Runner {
 	instances: Instance[] = [];
 	
 	generation = 0;
-	generationText = this.scene.add.text( 0, 0, 'gen: ' );
+	generationText: Phaser.GameObjects.Text;
 	
 	alive: number = 0;
-	aliveText = this.scene.add.text( 85, 0, 'alive: ' );
+	aliveText: Phaser.GameObjects.Text;
 	
 	constructor( scene: Main ) {
 		this.scene = scene;
+		
+		this.generationText = this.scene.add.text( 0, 0, 'gen: ' );
+		this.aliveText = this.scene.add.text( 85, 0, 'alive: ' );
 		
 		const timeline = new Timeline( this );
 		
