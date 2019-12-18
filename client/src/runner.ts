@@ -1,3 +1,5 @@
+import Stats from 'stats.js';
+
 import Instance from './instance';
 import Main from './main';
 import NeuroEvolution from './neuroEvolution';
@@ -10,7 +12,7 @@ export default class Runner {
 	scene: Main;
 	
 	neuvol = new NeuroEvolution( {
-		population:    1,
+		population:    200,
 		mutationRange: .8,
 		mutationRate:  .2,
 		network:       [ 8, [ 10 ], 2 ]
@@ -30,6 +32,13 @@ export default class Runner {
 		
 		this.generationText = this.scene.add.text( 0, 0, 'gen: ' );
 		this.aliveText = this.scene.add.text( 85, 0, 'alive: ' );
+		
+		const stats = new Stats();
+		stats.showPanel( 1 );
+		document.body.appendChild( stats.dom );
+		
+		this.scene.game.events.on( Phaser.Core.Events.PRE_STEP, () => stats.begin() );
+		this.scene.game.events.on( Phaser.Core.Events.POST_RENDER, () => stats.end() );
 		
 		const timeline = new Timeline( this );
 		
