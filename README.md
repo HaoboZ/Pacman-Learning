@@ -1,4 +1,4 @@
-# Pacman
+# Pacman Learning
 
 Simple pacman, with machine learning.
 
