@@ -55,7 +55,7 @@ export default class Main extends Phaser.Scene {
 		this.debugGraphic.setDepth( Number.MAX_VALUE );
 		this.events.on( 'preupdate', () => this.debugGraphic.clear() );
 		
-		this.runner = new Runner( this );
+		new Runner( this );
 		
 		new Controller( this );
 	}

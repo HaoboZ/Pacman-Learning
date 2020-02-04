@@ -88,13 +88,17 @@ export default class Pacman extends Entity {
 				}
 			}
 			
-			this.target = this.scene.runner.generate( this.instance.index );
-			this.targetNextDirection( tilePos );
+			if ( this.scene.runner.neuvol.options.population !== 1 ) {
+				this.target = this.scene.runner.generate( this.instance.index );
+				this.targetNextDirection( tilePos );
+			}
 			this.prevTile = tilePos;
 		}
 		
-		this.scene.debugGraphic.lineStyle( 1, this.instance.index ? 0xffffff : 0x00ff00, this.instance.index ? 0.25 : 1 );
-		this.scene.debugGraphic.lineBetween( this.x, this.y, this.target.x * 8 + 4, this.target.y * 8 + 4 );
+		if ( this.scene.runner.neuvol.options.population !== 1 ) {
+			this.scene.debugGraphic.lineStyle( 1, this.instance.index ? 0xffffff : 0x00ff00, this.instance.index ? 0.25 : 1 );
+			this.scene.debugGraphic.lineBetween( this.x, this.y, this.target.x * 8 + 4, this.target.y * 8 + 4 );
+		}
 		super.update();
 	}
 	

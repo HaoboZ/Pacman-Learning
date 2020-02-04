@@ -1,5 +1,8 @@
 import Entity from './entities';
 import Blinky from './entities/ghost/blinky';
+import Clyde from './entities/ghost/clyde';
+import Inky from './entities/ghost/inky';
+import Pinky from './entities/ghost/pinky';
 import Pacman from './entities/pacman';
 import Main from './main';
 
@@ -46,12 +49,15 @@ export default class Instance extends Phaser.GameObjects.GameObject {
 	
 	addEntitiesFromLayers() {
 		this.scene.map.getObjectLayer( 'entities' ).objects.forEach( ( object ) => {
-			const SpriteClass = {
+			const SpriteClass = this.scene.runner.neuvol.options.population === 1 ? {
+				'pacman': Pacman,
+				'blinky': Blinky,
+				'pinky':  Pinky,
+				'inky':   Inky,
+				'clyde':  Clyde
+			}[ object.name ] : {
 				'pacman': Pacman,
 				'blinky': Blinky
-				// 'pinky':  Pinky,
-				// 'inky':   Inky,
-				// 'clyde':  Clyde
 			}[ object.name ];
 			if ( SpriteClass ) {
 				const sprite: Phaser.Physics.Arcade.Sprite = new SpriteClass( this, object.x, object.y,

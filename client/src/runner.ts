@@ -29,6 +29,7 @@ export default class Runner {
 	
 	constructor( scene: Main ) {
 		this.scene = scene;
+		this.scene.runner = this;
 		
 		this.generationText = this.scene.add.text( 0, 0, 'gen: ' );
 		this.aliveText = this.scene.add.text( 85, 0, 'alive: ' );
@@ -40,8 +41,7 @@ export default class Runner {
 		this.scene.game.events.on( Phaser.Core.Events.PRE_STEP, () => stats.begin() );
 		this.scene.game.events.on( Phaser.Core.Events.POST_RENDER, () => stats.end() );
 		
-		const timeline = new Timeline( this );
-		
+		let timeline = new Timeline( this );
 		const data = [];
 		for ( let i = 0; i < this.neuvol.options.population; ++i ) {
 			const instance = new Instance( this.scene, i );
